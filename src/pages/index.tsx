@@ -1,3 +1,4 @@
+import router from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import { useEffect, useState } from 'react'
 
@@ -20,10 +21,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function SlowPage({ wait }: { wait: string }) {
   const [info, setInfo] = useState<string>('')
+  const [waiTime, setWaitTime] = useState<string>('0')
 
   useEffect(() => {
     function lockMainThread(time: number) {
-      debugger
       let milliseconds = 0
 
       console.log(`Wait time: ${time}`)
@@ -44,6 +45,14 @@ export default function SlowPage({ wait }: { wait: string }) {
 
     setInfo(lockMainThread(parseInt(wait)))
   }, [wait])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWaitTime(e.target.value)
+  }
+
+  const handleReloadClick = (time: string) => () => {
+    window.location.href = `/?wait=${time}`
+  }
 
   return (
     <div className="slowPage">
@@ -78,17 +87,18 @@ export default function SlowPage({ wait }: { wait: string }) {
       </div>
 
       <input
-        type="text"
-        name=""
-        id=""
-        placeholder="input"
-        onKeyUp={(e: any) => console.log(e.target.value)}
+        type="number"
+        min={0}
+        step={1}
+        placeholder="Seconds to wait"
+        defaultValue={wait}
+        onChange={handleInputChange}
       />
 
       <input
         type="button"
-        value="Click me"
-        onClick={() => console.log('click')}
+        defaultValue="Reload"
+        onClick={handleReloadClick(waiTime)}
       />
 
       <h2 id="info">{info}</h2>
