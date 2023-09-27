@@ -8,7 +8,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let { wait } = query
 
   if (!wait) {
-    wait = '2000'
+    wait = '2'
   }
 
   return {
@@ -23,6 +23,7 @@ export default function SlowPage({ wait }: { wait: string }) {
 
   useEffect(() => {
     function lockMainThread(time: number) {
+      debugger
       let milliseconds = 0
 
       console.log(`Wait time: ${time}`)
